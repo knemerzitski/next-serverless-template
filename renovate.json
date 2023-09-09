@@ -2,5 +2,23 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
+  ],
+  "npm": {
+    "rangeStrategy": "bump"
+  },
+  "assignees": [
+    "knemerzitski"
+  ],
+  "labels": [
+    "dependencies-test"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": false
+    }
   ]
 }
