@@ -1,3 +1,9 @@
+/**
+ * Configuration for semantic-release
+ *
+ * @see {@link https://semantic-release.gitbook.io/semantic-release/} for documentation
+ */
+
 const typesConfig = require('./commit-types.config');
 
 const changelogFile = 'CHANGELOG.md';
@@ -6,6 +12,9 @@ module.exports = {
   branches: ['release', { name: 'beta', prerelease: true }],
   tagFormat: 'v${version}',
   plugins: [
+    /**
+     * @see https://github.com/semantic-release/commit-analyzer
+     */
     [
       '@semantic-release/commit-analyzer',
       {
@@ -17,6 +26,9 @@ module.exports = {
         ],
       },
     ],
+    /**
+     * @see https://github.com/semantic-release/release-notes-generator
+     */
     [
       '@semantic-release/release-notes-generator',
       {
@@ -30,6 +42,9 @@ module.exports = {
         },
       },
     ],
+    /**
+     * @see https://github.com/semantic-release/changelog
+     */
     [
       '@semantic-release/changelog',
       {
@@ -38,6 +53,9 @@ module.exports = {
           '# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/) and this project adheres to [Semantic Versioning](https://semver.org/).\n\n## [Released](https://github.com/knemerzitski/next-template/releases)',
       },
     ],
+    /**
+     * @see https://github.com/semantic-release/git
+     */
     [
       '@semantic-release/git',
       {
@@ -45,6 +63,9 @@ module.exports = {
         message: 'release: 🏹 ${nextRelease.gitTag} [skip ci]\n\n${nextRelease.notes}',
       },
     ],
+    /**
+     * @see https://github.com/semantic-release/github
+     */
     [
       '@semantic-release/github',
       {

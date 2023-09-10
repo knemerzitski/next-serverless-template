@@ -1,3 +1,9 @@
+/**
+ * Configuration for commitlint
+ *
+ * @see {@link https://commitlint.js.org/#/} for documentation
+ */
+
 const commitTypesConfig = require('./commit-types.config');
 const changelogConfig = require('./changelog.config');
 

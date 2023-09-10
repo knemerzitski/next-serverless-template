@@ -2,6 +2,7 @@
   "name": "next-template",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,14 +14,6 @@
     "prepare": "husky install",
     "commitmsg": "commitlint --edit $GIT_PARAMS",
     "semantic-release": "SKIP_BY_SEMANTIC_RELEASE=true semantic-release"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix"
-    ],
-    "*.*": [
-      "prettier --write"
-    ]
   },
   "dependencies": {
     "next": "^13.4.12",

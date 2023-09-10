@@ -1,3 +1,9 @@
+/**
+ * Configuration for git-cz
+ *
+ * @see {@link https://github.com/streamich/git-cz} for documentation
+ */
+
 const commitTypesConfig = require('./commit-types.config');
 
 module.exports = {
@@ -6,7 +12,7 @@ module.exports = {
   list: commitTypesConfig.map(({ type }) => type),
   maxMessageLength: 64,
   minMessageLength: 3,
-  questions: ['type', 'scope', 'subject', 'body', 'breaking', 'issues', 'lerna'],
+  questions: ['type', 'subject', 'body', 'breaking', 'issues'],
   types: Object.fromEntries(
     commitTypesConfig.map(({ type, description, emoji }) => [type, { description, emoji, value: type }])
   ),
