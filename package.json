@@ -10,7 +10,8 @@
     "lint-staged": "lint-staged",
     "test": "jest",
     "test:watch": "jest --watch",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "commitlint": "commitlint --edit $GIT_PARAMS"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -24,6 +25,8 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.7.1",
+    "@commitlint/config-conventional": "^17.7.0",
     "@testing-library/jest-dom": "^6.1.3",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.4",
