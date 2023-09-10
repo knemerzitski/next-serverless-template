@@ -1,5 +1,5 @@
 {
-  "name": "test-renovatebot",
+  "name": "next-template",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,9 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
+      "eslint --fix"
+    ],
+    "*": [
       "prettier --write"
     ]
   },
