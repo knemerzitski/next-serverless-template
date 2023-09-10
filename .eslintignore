@@ -1,0 +1,4 @@
+# config
+.eslintrc.js
+jest-setup.js
+**/*config.js
