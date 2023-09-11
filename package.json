@@ -11,8 +11,8 @@
     "jest": "jest",
     "jest:watch": "jest --watch",
     "cy": "cypress open",
-    "cy:e2e": "start-server-and-test start http://localhost:3000 \"cypress run --e2e\"",
-    "cy:component": "cypress run --component",
+    "e2e": "start-server-and-test start http://localhost:3000 \"cypress run --e2e\"",
+    "component": "cypress run --component",
     "prepare": "husky install",
     "semantic-release": "SKIP_BY_SEMANTIC_RELEASE=true semantic-release"
   },

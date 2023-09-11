@@ -1,8 +1,8 @@
-import Home from './page';
+import About from '@/components/About';
 
 describe('<Home />', () => {
   it('renders and displays expected content', () => {
-    cy.mount(<Home />);
+    cy.mount(<About />);
 
     cy.get('h1').contains('About Page');
 

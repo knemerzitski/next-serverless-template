@@ -25,7 +25,7 @@
   },
   "overrides": [
     {
-      "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+      "files": ["__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
       "extends": ["plugin:testing-library/react", "plugin:jest-dom/recommended"],
       "plugins": ["jest"],
       "env": {
@@ -33,7 +33,7 @@
       }
     },
     {
-      "files": ["**/cypress/**/*.[jt]s?(x)", "**/?(*.)+(cy).[jt]s?(x)"],
+      "files": ["cypress/**/*.[jt]s?(x)", "**/?(*.)+(cy).[jt]s?(x)"],
       "extends": ["plugin:cypress/recommended"],
       "plugins": ["cypress"],
       "env": {
