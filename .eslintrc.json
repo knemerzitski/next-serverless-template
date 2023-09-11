@@ -31,6 +31,14 @@
       "env": {
         "jest/globals": true
       }
+    },
+    {
+      "files": ["**/cypress/**/*.[jt]s?(x)", "**/?(*.)+(cy).[jt]s?(x)"],
+      "extends": ["plugin:cypress/recommended"],
+      "plugins": ["cypress"],
+      "env": {
+        "cypress/globals": true
+      }
     }
   ]
 }
