@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+  ],
+  "settings": {
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/*.next": true,
+    },
+    "css.lint.unknownAtRules": "ignore",
+    "files.associations": {
+      "*.css": "tailwindcss",
+    },
+    "editor.quickSuggestions": {
+      "strings": true
+    }
+  },
+}

@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-namespace */
 // ***********************************************************
 // This example support/component.ts is processed and
 // loaded automatically before your test files.
@@ -38,3 +38,5 @@ Cypress.Commands.add('mount', mount);
 
 // Example use:
 // cy.mount(<MyComponent />)
+
+import '@/app/globals.css';
