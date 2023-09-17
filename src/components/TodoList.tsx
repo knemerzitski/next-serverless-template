@@ -1,33 +1,139 @@
+import { useQuery, useMutation } from '@apollo/client';
+import { v4 as uuid } from 'uuid';
+
+import { gql } from '@/__generated__/gql';
 import AddItemForm from '@/components/AddItemForm';
-import Item from '@/components/Item';
+import ItemsList from '@/components/ItemsList';
 
-export interface ItemProps {
-  id: number;
-  name: string;
-  done: boolean;
-}
+const GET_ITEMS = gql(` 
+  query Items {
+    items {
+      id
+      name
+      done 
+    }
+  }
+`);
 
-interface TodoListProps {
-  items: ItemProps[];
-  onAddItem: (name: string) => Promise<boolean>;
-  onRemoveItem: (id: number) => Promise<boolean>;
-  onUpdateItemDone: (id: number, done: boolean) => Promise<boolean>;
-}
+const ADD_ITEM = gql(`
+  mutation AddItem($name: String!) {
+    insertItem(name: $name) {
+      optimistic @client
+      id
+      name
+      done
+    }
+  }
+`);
 
-export default function TodoList({ items, onAddItem, onRemoveItem, onUpdateItemDone }: TodoListProps) {
+const UPDATE_ITEM = gql(`
+  mutation UpdateItem($id: ID!, $name: String, $done: Boolean) {
+    updateItem(id: $id, name: $name, done: $done)
+  }
+`);
+
+const REMOVE_ITEM = gql(`
+  mutation RemoveItem($id: ID!) {
+    deleteItem(id: $id)
+  }
+`);
+
+export default function TodoList() {
+  const { data, loading, error } = useQuery(GET_ITEMS);
+  const [addItem] = useMutation(ADD_ITEM);
+  const [updateItem] = useMutation(UPDATE_ITEM);
+  const [removeItem] = useMutation(REMOVE_ITEM);
+
+  if (loading) {
+    return 'Loading...';
+  }
+  if (error) {
+    return `Error ${error.message}`;
+  }
+
+  const items = data!.items;
+
+  async function handleAddItem(name: string) {
+    // const { errors } = await addItem({
+    addItem({
+      variables: {
+        name,
+      },
+      optimisticResponse: {
+        insertItem: {
+          optimistic: true,
+          id: uuid(),
+          name,
+          done: false,
+        },
+      },
+      update(cache, { data }) {
+        if (data?.insertItem) {
+          cache.updateQuery({ query: GET_ITEMS }, (cachedData) => {
+            if (cachedData) {
+              return { items: [...cachedData.items, data.insertItem] };
+            }
+          });
+        }
+      },
+    });
+    return true;
+  }
+
+  async function handleUpdateItemDone(id: string, done: boolean) {
+    const { data } = await updateItem({
+      variables: {
+        id,
+        done,
+      },
+      optimisticResponse: {
+        updateItem: true,
+      },
+      update(cache, { data }) {
+        if (data?.updateItem) {
+          cache.updateQuery({ query: GET_ITEMS }, (cachedData) => {
+            if (cachedData) {
+              return {
+                items: cachedData.items.map((item) => ({
+                  ...item,
+                  done: id === item.id ? done : item.done,
+                })),
+              };
+            }
+          });
+        }
+      },
+    });
+    return data?.updateItem ?? false;
+  }
+
+  async function handleRemoveItem(id: string) {
+    const { data } = await removeItem({
+      variables: {
+        id,
+      },
+      optimisticResponse: {
+        deleteItem: true,
+      },
+      update(cache, { data }) {
+        if (data?.deleteItem) {
+          cache.updateQuery({ query: GET_ITEMS }, (cachedData) => {
+            if (cachedData) {
+              return {
+                items: cachedData.items.filter((item) => id !== item.id),
+              };
+            }
+          });
+        }
+      },
+    });
+    return data?.deleteItem ?? false;
+  }
+
   return (
     <>
-      <ul className="mt-8 flex flex-col gap-3">
-        {items.map((item) => (
-          <Item
-            key={item.id}
-            {...item}
-            onUpdateDone={(done) => onUpdateItemDone(item.id, done)}
-            onRemove={() => onRemoveItem(item.id)}
-          />
-        ))}
-      </ul>
-      <AddItemForm onNewItem={onAddItem} />
+      <ItemsList items={items} onRemoveItem={handleRemoveItem} onUpdateItemDone={handleUpdateItemDone} />
+      <AddItemForm onNewItem={handleAddItem} />
     </>
   );
 }

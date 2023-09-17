@@ -3,11 +3,12 @@ import classNames from 'classnames';
 interface ItemProps {
   name: string;
   done?: boolean;
+  removable?: boolean;
   onUpdateDone?: (done: boolean) => void;
   onRemove?: () => void;
 }
 
-export default function Item({ name, done = false, onUpdateDone = () => {}, onRemove = () => {} }: ItemProps) {
+export default function Item({ name, done = false, onUpdateDone, onRemove }: ItemProps) {
   return (
     <li
       className={classNames(
@@ -15,20 +16,22 @@ export default function Item({ name, done = false, onUpdateDone = () => {}, onRe
         'flex justify-between',
         'bg-white border',
         'border-gray-500 rounded-sm shadow-sm shadow-black/10',
-        'hover:cursor-pointer'
+        onUpdateDone ? 'hover:cursor-pointer' : ''
       )}
-      onClick={() => onUpdateDone(!done)}
+      onClick={onUpdateDone ? () => onUpdateDone(!done) : undefined}
     >
       <span className={classNames(done ? 'line-through' : '')}>{name}</span>
-      <button
-        className="text-red-500 font-bold"
-        onClick={(e) => {
-          e.stopPropagation();
-          onRemove();
-        }}
-      >
-        ✕
-      </button>
+      {onRemove && (
+        <button
+          className="text-red-500 font-bold"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+        >
+          ✕
+        </button>
+      )}
     </li>
   );
 }

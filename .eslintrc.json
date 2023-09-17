@@ -1,5 +1,5 @@
 {
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "next/core-web-vitals", "prettier"],
+  "extends": ["eslint:recommended", "next/core-web-vitals", "prettier"],
   "globals": {
     "React": true
   },
@@ -25,6 +25,33 @@
   },
   "overrides": [
     {
+      "files": ["*.[t]s?(x)"],
+      "extends": "plugin:@typescript-eslint/recommended"
+    },
+    {
+      "files": ["src/**/*.[jt]s?(x)"],
+      "processor": "@graphql-eslint/graphql"
+    },
+    {
+      "files": ["*.graphql"],
+      "extends": ["plugin:@graphql-eslint/schema-recommended", "plugin:@graphql-eslint/operations-recommended"],
+      "rules": {
+        "@graphql-eslint/description-style": "off",
+        "@graphql-eslint/require-description": [
+          "error",
+          {
+            "OperationDefinition": false,
+            "FieldDefinition": true,
+            "DirectiveDefinition": true
+          }
+        ],
+        "@graphql-eslint/executable-definitions": "off"
+      },
+      "parserOptions": {
+        "schema": ["./src/app/graphql/schema.graphql", "./src/app/graphql/client-schema.graphql"]
+      }
+    },
+    {
       "files": ["__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
       "extends": ["plugin:testing-library/react", "plugin:jest-dom/recommended"],
       "plugins": ["jest"],
@@ -33,7 +60,7 @@
       }
     },
     {
-      "files": ["cypress/**/*.[jt]s?(x)", "**/?(*.)+(cy).[jt]s?(x)"],
+      "files": ["cypress/**/*.[jt]s?(x)"],
       "extends": ["plugin:cypress/recommended"],
       "plugins": ["cypress"],
       "env": {
