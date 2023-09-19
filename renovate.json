@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base", "timezone(Europe/Tallinn)"],
+  "extends": ["config:base"],
+  "timezone": "Europe/Tallinn",
   "schedule": ["after 2am and before 7am every weekend"],
   "npm": {
     "rangeStrategy": "bump"
