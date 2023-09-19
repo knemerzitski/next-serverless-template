@@ -2,7 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [feat/no-ref/todoapp]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   unit-tests:
