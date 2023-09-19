@@ -10,19 +10,11 @@ jobs:
       matrix:
         node: [18]
         os: [ubuntu-latest]
-    name: Node.js v${{ matrix.node }} on ${{ matrix.os }}
+    name: Unit tests (Node.js v${{ matrix.node }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # - name: Cache node modules
-      #   id: cache-npm
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       **/node_modules
-      #     key: ${{ runner.os }}-${{ matrix.node }}-${{ hashFiles('**/package-lock.json')}}
 
       - name: Use Node.js ${{ matrix.os }}
         uses: actions/setup-node@v3
@@ -41,7 +33,7 @@ jobs:
       matrix:
         node: [18]
         os: [ubuntu-latest]
-    name: Node.js v${{ matrix.node }} on ${{ matrix.os }}
+    name: Component tests (Node.js v${{ matrix.node }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
@@ -64,7 +56,7 @@ jobs:
       matrix:
         node: [18]
         os: [ubuntu-latest]
-    name: Node.js v${{ matrix.node }} on ${{ matrix.os }}
+    name: E2E tests (Node.js v${{ matrix.node }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
@@ -78,18 +70,6 @@ jobs:
 
       - name: Clean install dependencies
         run: npm ci
-
-      # - name: Next.js build cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       ~/.npm
-      #       ${{ github.workspace }}/.next/cache
-      #     # Generate a new cache whenever packages or source files change.
-      #     key: ${{ runner.os }}-${{ matrix.node }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-      #     # If source files changed but packages didn't, rebuild from a prior cache.
-      #     restore-keys: |
-      #       ${{ runner.os }}-${{ matrix.node }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
       - name: Build Next.js project
         run: npm run build
