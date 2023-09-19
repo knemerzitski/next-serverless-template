@@ -4,19 +4,19 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "prepare": "husky install && graphql-codegen",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --cache",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test:unit": "jest",
+    "test:unit:watch": "jest --watch",
+    "test:e2e": "start-test \"docker compose -p test -f docker-compose.test.yml up & next start\" http://localhost:3000 \"cypress run --e2e\"",
+    "test:component": "cypress run --component",
     "cypress": "cypress open",
-    "e2e": "start-test \"docker compose -p test -f docker-compose.test.yml up & next start\" http://localhost:3000 \"cypress run --e2e\"",
-    "component": "cypress run --component",
-    "prepare": "husky install && graphql-codegen",
-    "semantic-release": "SKIP_BY_SEMANTIC_RELEASE=true semantic-release",
     "graphql:generate": "graphql-codegen",
-    "graphql:watch": "graphql-codegen -w"
+    "graphql:watch": "graphql-codegen -w",
+    "semantic-release": "SKIP_BY_SEMANTIC_RELEASE=true semantic-release"
   },
   "validate-branch-name": {
     "pattern": "^(dev|test|main|release)$|^(feat|fix|hotfix|wip|merge)/(no-ref|issue-\\d+)/.+$"

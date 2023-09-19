@@ -11,7 +11,7 @@ export const Item =
         type: Schema.Types.UUID,
         default: () => randomUUID(),
       },
-      name: String,
-      done: Boolean,
+      name: Schema.Types.String,
+      done: Schema.Types.Boolean,
     })
   );
