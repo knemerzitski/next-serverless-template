@@ -26,3 +26,12 @@ type Mutation {
   "Delete item from the list"
   deleteItem(id: ID!): Boolean!
 }
+
+type Subscription {
+  "New item has been added to the list"
+  itemCreated: Item!
+  "Item has been updated in the list"
+  itemUpdated: Item!
+  "Item has been deleted from the list"
+  itemRemoved: ID!
+}

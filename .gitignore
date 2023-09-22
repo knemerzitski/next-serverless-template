@@ -40,3 +40,7 @@ src/__generated__
 .eslintcache
 
 .swc
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
