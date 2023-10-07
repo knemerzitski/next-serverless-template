@@ -25,8 +25,8 @@
     "pattern": "^(dev|test|main|release)$|^(feat|fix|hotfix|wip|merge)/(no-ref|issue-\\d+)/.+$"
   },
   "dependencies": {
-    "@apollo/client": "^3.8.4",
-    "@apollo/server": "^4.9.3",
+    "@apollo/client": "^3.8.5",
+    "@apollo/server": "^4.9.4",
     "classnames": "^2.3.2",
     "encoding": "^0.1.13",
     "graphql": "^16.8.1",
