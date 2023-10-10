@@ -3,9 +3,9 @@
 import 'source-map-support/register';
 import { App } from 'aws-cdk-lib';
 
-import { InfraStack } from '../lib/infra-stack';
+import { InfraStack } from './infraStack';
 
 const app = new App();
-new InfraStack(app, 'todo-app-stack', {
+new InfraStack(app, 'TodoAppStack', {
   env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
 });

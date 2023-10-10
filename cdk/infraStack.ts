@@ -16,17 +16,19 @@ export class InfraStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    // TODO check for required environment variables
+
     const tables = createCdkTableConstructs(this);
 
-    const wsConnectLambda = new NodejsFunction(this, 'ws-connect-lambda', {
-      entry: path.join(__dirname, './graphql-lambda/ws-connect-lambda.ts'),
+    const webSocketSubscriptionLambda = new NodejsFunction(this, 'WebSocketSubscriptionHandler', {
+      entry: path.join(__dirname, './../src/api/graphql-lambda/webSocketSubscriptionHandler.ts'),
       handler: 'handler',
       runtime: Runtime.NODEJS_18_X,
       logRetention: RetentionDays.ONE_DAY,
       bundling: {
         externalModules: ['@aws-sdk/*'],
-        tsconfig: path.join(__dirname, './../tsconfig.json'),
-        //minify: true,
+        tsconfig: path.join(__dirname, './tsconfig.json'),
+        minify: true,
         loader: {
           '.graphql': 'text',
         },
@@ -37,41 +39,49 @@ export class InfraStack extends Stack {
       },
     });
 
-    const wsDisconnectLambda = new NodejsFunction(this, 'ws-disconnect-lambda', {
-      entry: path.join(__dirname, './graphql-lambda/ws-disconnect-lambda.ts'),
+    const apolloHttpRequestLambda = new NodejsFunction(this, 'ApolloHttpRequestHandler', {
+      entry: path.join(__dirname, './../src/api/graphql-lambda/apolloHttpRequestHandler.ts'),
       handler: 'handler',
       runtime: Runtime.NODEJS_18_X,
       logRetention: RetentionDays.ONE_DAY,
+      timeout: Duration.seconds(10),
+      memorySize: 128,
       bundling: {
         externalModules: ['@aws-sdk/*'],
         tsconfig: path.join(__dirname, './../tsconfig.json'),
-        //minify: true,
+        minify: true,
+        loader: {
+          '.graphql': 'text',
+        },
       },
       environment: {
-        // TODO update environment variables
-        CONNECTIONS_TABLE_NAME: tables.connections.tableName,
+        // TODO update environment vars
+        MONGODB_URI: 'mongodb://root:example@host.docker.internal:27017/mongo?authSource=admin',
       },
     });
 
-    const webSocketApi = new WebSocketApi(this, 'websocket-api', {
+    const webSocketApi = new WebSocketApi(this, 'WebSocketApi', {
       connectRouteOptions: {
-        integration: new WebSocketLambdaIntegration('ws-connect-integration', wsConnectLambda),
+        integration: new WebSocketLambdaIntegration(
+          'WsConnectIntegration',
+          webSocketSubscriptionLambda
+        ),
       },
       disconnectRouteOptions: {
         integration: new WebSocketLambdaIntegration(
-          'ws-disconnect-integration',
-          wsDisconnectLambda
+          'WsDisconnectIntegration',
+          webSocketSubscriptionLambda
         ),
       },
     });
 
-    /* const webSocketStage =  */ new WebSocketStage(this, 'websocket-stage', {
+    /* const webSocketStage =  */ new WebSocketStage(this, 'WebSocketStage', {
       webSocketApi: webSocketApi,
       stageName: 'prod',
       autoDeploy: true,
     });
 
-    const restApi = new RestApi(this, 'rest-api', {
+    const restApi = new RestApi(this, 'RestApi', {
       endpointTypes: [EndpointType.REGIONAL],
       deployOptions: {
         stageName: 'prod',
@@ -83,29 +93,9 @@ export class InfraStack extends Stack {
       },
     });
 
-    const apiLambda = new NodejsFunction(this, 'api-lambda', {
-      entry: path.join(__dirname, './graphql-lambda/handler.ts'),
-      handler: 'handler',
-      runtime: Runtime.NODEJS_18_X,
-      logRetention: RetentionDays.ONE_DAY,
-      timeout: Duration.seconds(10),
-      memorySize: 128,
-      bundling: {
-        externalModules: ['@aws-sdk/*'],
-        tsconfig: path.join(__dirname, './../tsconfig.json'),
-        //minify: true,
-        loader: {
-          '.graphql': 'text',
-        },
-      },
-      environment: {
-        MONGODB_URI: 'mongodb://root:example@host.docker.internal:27017/mongo?authSource=admin',
-      },
-    });
-
     const graphqlResource = restApi.root.addResource('graphql');
     ['POST', 'GET'].forEach((method) => {
-      graphqlResource.addMethod(method, new LambdaIntegration(apiLambda));
+      graphqlResource.addMethod(method, new LambdaIntegration(apolloHttpRequestLambda));
     });
   }
 }
