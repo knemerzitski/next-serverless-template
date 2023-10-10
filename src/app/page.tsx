@@ -4,7 +4,7 @@ import { ApolloProvider } from '@apollo/client';
 import classNames from 'classnames';
 
 import TodoList from '@/components/TodoList';
-import apolloClient from '@/lib/graphql-client';
+import apolloClient from '@/utils/graphqlClient';
 
 export default function Home() {
   return (

@@ -1,4 +1,4 @@
 schema:
-  - './graphql/schema.graphql'
-  - './graphql/schema-client.graphql'
+  - './src/schema/typedefs.graphql'
+  - './src/schema/typedefs-client.graphql'
 documents: './src/**/*.{graphql,js,ts,jsx,tsx}'
