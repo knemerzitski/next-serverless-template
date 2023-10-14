@@ -1,53 +1,55 @@
 import debug from 'debug';
 
-// TODO remove comment
-//const DEBUG_NAME = 'api-graphql-lambda';
+type LogLevel = 'info' | 'warning' | 'error';
 
-export type LogLevel = 'info' | 'warning' | 'error';
+type LogData = Record<string, unknown>;
 
-export interface LogEntry extends Record<string, unknown> {
+interface LogEntry extends Record<string, unknown> {
   level: LogLevel;
   message: string;
+  data?: LogData;
 }
-
-type LogMore = Record<string, unknown>;
 
 export interface Logger {
   log: (entry: LogEntry) => void;
-  info: (message: string, more?: LogMore) => void;
-  warning: (message: string, more?: LogMore) => void;
-  error: (message: string, errror: Error, more?: Record<string, unknown>) => void;
+  info: (message: string, data?: LogData) => void;
+  warning: (message: string, data?: LogData) => void;
+  error: (message: string, error: Error, extraData?: LogData) => void;
 }
 
 export function createLogger(namespace: string): Logger {
-  const debugLog = debug(namespace);
+  const logFunc = debug(namespace);
 
   function log(entry: LogEntry) {
-    debugLog(entry);
+    logFunc(`${entry.level.toUpperCase()}\t${entry.message}${entry.data ? ' %j' : ''}`, entry.data);
   }
 
   return {
     log,
-    info(message, more) {
+    info(message, data) {
       log({
         level: 'info',
         message,
-        ...more,
+        data,
       });
     },
-    warning(message, more) {
+    warning(message, data) {
       log({
         level: 'warning',
         message,
-        ...more,
+        data,
       });
     },
-    error(message, error, more) {
+    error(message, error, extraData) {
       log({
         level: 'error',
         message,
-        error,
-        ...more,
+        data: {
+          errorType: error.name,
+          errorMessage: error.message,
+          stack: error.stack?.toString().split('\n'),
+          data: extraData,
+        },
       });
     },
   };
