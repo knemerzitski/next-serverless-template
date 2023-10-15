@@ -17,11 +17,20 @@ export interface Logger {
   error: (message: string, error: Error, extraData?: LogData) => void;
 }
 
+/**
+ * During development use %O for readable output in VSCode terminal
+ * During production use %j for readable output in CloudWatch
+ */
+const logDataFormatter = process.env.NODE_ENV === 'production' ? '%j' : '%O';
+
 export function createLogger(namespace: string): Logger {
   const logFunc = debug(namespace);
 
   function log(entry: LogEntry) {
-    logFunc(`${entry.level.toUpperCase()}\t${entry.message}${entry.data ? ' %j' : ''}`, entry.data);
+    logFunc(
+      `${entry.level.toUpperCase()}\t${entry.message}${entry.data ? ` ${logDataFormatter}` : '%s'}`,
+      entry.data ?? ''
+    );
   }
 
   return {
