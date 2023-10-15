@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "mock:lambda:dev",
+      "type": "node-terminal",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "command": "npm run mock:lambda:dev",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack://?:*/*": "${workspaceFolder}/mocks/graphql-lambda/*"
+      }
+    },
+    {
+      "name": "next.js:server",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev"
+    },
+    {
+      "name": "next.js:client",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000"
+    },
+    {
+      "name": "next.js:full",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "serverReadyAction": {
+        "pattern": "started server on .+, url: (https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    },
+    {
+      "name": "jest:watch:current_file",
+      "command": "npx jest ${fileBasename} --watch",
+      "request": "launch",
+      "type": "node-terminal"
+    }
+  ]
+}

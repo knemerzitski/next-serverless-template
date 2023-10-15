@@ -4,7 +4,7 @@ import { configurePlugin } from 'cypress-mongodb';
 export default defineConfig({
   env: {
     mongodb: {
-      uri: 'mongodb://localhost:27017',
+      uri: 'mongodb://root:example@localhost:27017?authSource=admin',
       database: 'mongo',
       collecton: 'items',
     },

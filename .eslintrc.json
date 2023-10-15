@@ -34,7 +34,10 @@
     },
     {
       "files": ["*.graphql"],
-      "extends": ["plugin:@graphql-eslint/schema-recommended", "plugin:@graphql-eslint/operations-recommended"],
+      "extends": [
+        "plugin:@graphql-eslint/schema-recommended",
+        "plugin:@graphql-eslint/operations-recommended"
+      ],
       "rules": {
         "@graphql-eslint/description-style": "off",
         "@graphql-eslint/require-description": [
@@ -52,7 +55,7 @@
       }
     },
     {
-      "files": ["__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+      "files": ["test/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
       "extends": ["plugin:testing-library/react", "plugin:jest-dom/recommended"],
       "plugins": ["jest"],
       "env": {

@@ -16,7 +16,8 @@ export default function Item({ name, done = false, onUpdateDone, onRemove }: Ite
         'flex justify-between',
         'bg-white border',
         'border-gray-500 rounded-sm shadow-sm shadow-black/10',
-        onUpdateDone ? 'hover:cursor-pointer' : ''
+        onUpdateDone ? 'hover:cursor-pointer' : '',
+        done ? 'brightness-95' : ''
       )}
       onClick={onUpdateDone ? () => onUpdateDone(!done) : undefined}
     >
