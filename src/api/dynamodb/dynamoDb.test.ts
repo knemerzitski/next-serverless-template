@@ -268,6 +268,21 @@ describe('newTable', () => {
     expect(items).toEqual(expect.arrayContaining(expectedItems));
   });
 
+  it('querying by index for non-existent item returns empty array', async () => {
+    const items = await TABLE.queryAll({
+      IndexName: 'ConnectionIndex',
+      ExpressionAttributeNames: {
+        '#a': 'connectionId',
+      },
+      ExpressionAttributeValues: {
+        ':1': 'never',
+      },
+      KeyConditionExpression: '#a = :1',
+    });
+
+    expect(items.length).toBe(0);
+  });
+
   it('deletes item', async () => {
     const item = newItem();
 

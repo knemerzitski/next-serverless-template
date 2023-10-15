@@ -38,7 +38,7 @@ export const subscribe: MessageHandler<MessageType.Subscribe> = async ({
     });
     if (errors) {
       context.logger.info('subscribe:validateQueryError', { errors });
-      await context.socketApi.post({
+      return context.socketApi.post({
         ...event.requestContext,
         message: {
           type: MessageType.Error,
@@ -46,7 +46,6 @@ export const subscribe: MessageHandler<MessageType.Subscribe> = async ({
           payload: errors,
         },
       });
-      return;
     }
 
     const subscriptionContext = buildSubscriptionContext();
@@ -61,7 +60,7 @@ export const subscribe: MessageHandler<MessageType.Subscribe> = async ({
 
     // execContext as an array contains GraphQL errors
     if (isArray(execContext)) {
-      await context.socketApi.post({
+      return context.socketApi.post({
         ...event.requestContext,
         message: {
           type: MessageType.Error,
@@ -69,18 +68,12 @@ export const subscribe: MessageHandler<MessageType.Subscribe> = async ({
           payload: execContext,
         },
       });
-      return;
     }
 
     const operation = execContext.operation.operation;
     if (operation !== 'subscription') {
       // should just post error instead of throwing error?
       throw new Error(`Invalid operation '${operation}'. Only subscriptions are supported.`);
-    }
-
-    const subscriptionId = `${connection.id}:${message.id}`;
-    if (await context.models.subscriptions.get({ id: subscriptionId })) {
-      throw new Error(`Subscriber already exists for ${message.id}`);
     }
 
     const { field, parent, args, contextValue, info } = getResolverArgs(execContext);
@@ -95,7 +88,7 @@ export const subscribe: MessageHandler<MessageType.Subscribe> = async ({
     // TODO trigger subscribe onSubscribe?
 
     const subscription: Subscription = {
-      id: subscriptionId,
+      id: `${connection.id}:${message.id}`,
       topic,
       subscriptionId: message.id,
       subscription: message.payload,
@@ -108,7 +101,7 @@ export const subscribe: MessageHandler<MessageType.Subscribe> = async ({
     context.logger.info('subscribe:addSubscription', subscription);
 
     if (!(await context.models.subscriptions.add(['id'], subscription))) {
-      throw new Error(`Subscriber already exists for ${message.id}`);
+      throw new Error(`Subscriber already exists for "${message.id}"`);
     }
 
     // TODO trigger subscribe onAfterSubscribe?

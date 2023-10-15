@@ -30,8 +30,8 @@ jobs:
       - name: Start DynamoDB and MongoDB containers
         run: npm run test:prepare
 
-      - name: Run Jest unit tests
-        run: npm run test:unit
+      - name: Run Jest tests
+        run: npm run test:jest
 
       - name: Run Cypress component tests
         run: npm run test:component

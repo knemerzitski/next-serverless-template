@@ -58,8 +58,8 @@ export function getDefaultConfig(): WebSocketSubscriptionHandlerContextConfig {
         region: process.env.DYNAMODB_REGION!,
       },
       tableNames: {
-        connections: process.env.CONNECTIONS_TABLE_NAME!,
-        subscriptions: process.env.SUBSCRIPTIONS_TABLE_NAME!,
+        connections: process.env.DYNAMODB_CONNECTIONS_TABLE_NAME!,
+        subscriptions: process.env.DYNAMODB_SUBSCRIPTIONS_TABLE_NAME!,
       },
     },
     apiGateway: {
@@ -113,9 +113,9 @@ export function createHandler(
     defaultTtl: config.defaultTtl,
   };
 
-  return async (event, lambdaContext) => {
-    lambdaContext.callbackWaitsForEmptyEventLoop = false;
+  logger.info('createHandler');
 
+  return async (event) => {
     try {
       const { eventType } = event.requestContext;
 
@@ -128,8 +128,8 @@ export function createHandler(
 
       return (await eventHandler({ context, event })) ?? defaultResponse;
     } catch (err) {
-      logger.error('webSocketSubscriptionHandler', err as Error);
-      return defaultResponse;
+      logger.error('webSocketSubscriptionHandler', err as Error, { event });
+      throw err;
     }
   };
 }

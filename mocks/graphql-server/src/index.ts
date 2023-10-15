@@ -77,15 +77,19 @@ logger.info('env:load', { envPath: envPath.toString() });
       });
     });
 
+    if (!process.env.MOCK_MONGODB_URI) {
+      throw new Error('Environment variable "MOCK_MONGODB_URI" must be defined');
+    }
+
     const { connection: mongoose } = await buildMongoDbContext({
-      uri: process.env.MONGODB_URI!,
+      uri: process.env.MOCK_MONGODB_URI,
       logger: createLogger('mock:mongodb'),
       schema: mongooseSchema,
     });
 
     const pubsub = new PubSub();
     const publish: Publisher = (topic, payload) => {
-      return pubsub.publish(topic, payload);
+      return Promise.all([pubsub.publish(topic, payload)]);
     };
     const subscribe: Subscriber = (topic: string) => {
       return pubsub.asyncIterator([topic]);

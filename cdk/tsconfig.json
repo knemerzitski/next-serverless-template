@@ -1,11 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["es2020", "dom"],
-    "declaration": true,
+    "target": "ES2022",
+    "module": "Node16",
+    "lib": ["ES2023"],
+
     "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node16",
+
+    "declaration": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
@@ -19,14 +25,17 @@
     "inlineSourceMap": true,
     "inlineSources": true,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "strictPropertyInitialization": false,
-    "esModuleInterop": true,
     "typeRoots": ["./../node_modules/@types"],
     "baseUrl": ".",
     "outDir": "out",
     "paths": {
       "@/*": ["./../src/*"]
     }
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   },
   "exclude": ["node_modules", "cdk.out", "out"]
 }

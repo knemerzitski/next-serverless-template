@@ -7,7 +7,7 @@ import { DynamoDbContext } from '../context/dynamoDb';
 import { GraphQlContext } from '../context/graphQl';
 import { buildSubscriptionContext } from '../graphql/buildSubscriptionContext';
 
-export type Publisher = (topic: string, payload: Record<string, unknown>) => Promise<void>;
+export type Publisher = (topic: string, payload: Record<string, unknown>) => Promise<void[]>;
 
 interface CreatePublisherParams {
   graphQl: GraphQlContext;
@@ -26,6 +26,7 @@ export function createPublisher({
     logger.info('pubsub:publish', { topic, payload });
 
     // TODO implement subscription filtering?
+
     const subscriptions = await dynamoDb.subscriptions.queryAllByTopic(topic);
     logger.info('pubsub:publish', {
       subscriptions: subscriptions.map(({ connectionId, subscription }) => ({
@@ -51,11 +52,12 @@ export function createPublisher({
         payload: filteredPayload,
       };
 
-      socketApi.post({
+      return socketApi.post({
         ...sub.requestContext,
         message,
       });
     });
-    await Promise.all(subcriptionPostPromises);
+
+    return Promise.all(subcriptionPostPromises);
   };
 }

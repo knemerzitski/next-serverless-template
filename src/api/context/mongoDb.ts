@@ -1,9 +1,11 @@
+import { MongoClientOptions } from 'mongodb';
 import { Connection, Schema, createConnection } from 'mongoose';
 
 import { Logger } from '../../utils/logger';
 
 export interface MongoDbContextConfig {
   uri: string;
+  options?: MongoClientOptions;
   schema: Record<string, Schema>;
   logger: Logger;
 }
@@ -12,13 +14,18 @@ export interface MongoDbContext {
   connection: Connection;
 }
 
-export async function buildMongoDbContext(config: MongoDbContextConfig): Promise<MongoDbContext> {
+export async function buildMongoDbContext(
+  config: MongoDbContextConfig | (() => Promise<MongoDbContextConfig>)
+): Promise<MongoDbContext> {
+  if (typeof config === 'function') {
+    config = await config();
+  }
+
   config.logger.info('buildMongoDbContext:createConnection', {
     uri: config.uri,
   });
-  const newConn = createConnection(config.uri, {
-    serverSelectionTimeoutMS: 5000,
-  });
+
+  const newConn = createConnection(config.uri, config.options);
 
   try {
     const connection = await newConn.asPromise();

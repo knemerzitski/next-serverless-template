@@ -44,8 +44,12 @@ export async function createLambdaGraphQlServer({
     path: wsUrl.pathname,
   });
 
+  if (!process.env.MOCK_DYNAMODB_ENDPOINT) {
+    throw new Error('Environment variable "MOCK_DYNAMODB_ENDPOINT" must be defined');
+  }
+
   await createDynamoDbTables({
-    endpoint: process.env.DYNAMODB_ENDPOINT!,
+    endpoint: process.env.MOCK_DYNAMODB_ENDPOINT,
     logger,
   });
 

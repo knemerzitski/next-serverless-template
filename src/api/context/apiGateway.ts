@@ -32,7 +32,7 @@ export function buildApiGatewayContext(config: ApiGatewayContextConfig): ApiGate
   const clientCache: Record<string, ApiGatewayManagementApiClient> = {};
 
   function getClient({ domainName, stage }: Endpoint) {
-    const endpoint = `${domainName}/${stage}`;
+    const endpoint = `https://${domainName}/${stage}`;
     if (!(endpoint in clientCache)) {
       clientCache[endpoint] = config.newClient({
         endpoint,

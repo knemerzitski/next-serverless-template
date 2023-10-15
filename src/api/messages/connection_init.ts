@@ -25,7 +25,7 @@ export const connection_init: MessageHandler<MessageType.ConnectionInit> = async
   });
 
   // Send message connection acknowledged
-  await context.socketApi.post({
+  return context.socketApi.post({
     ...event.requestContext,
     message: {
       type: MessageType.ConnectionAck,

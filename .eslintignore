@@ -1,2 +1,5 @@
 src/__generated__
 **/*config.js
+cdk.out
+out
+node_modules

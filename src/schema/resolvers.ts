@@ -40,7 +40,7 @@ export const queryMutationResolvers = {
       const newItem = new Item({ name, done: false });
       await newItem.save();
 
-      publish('ITEM_CREATED', {
+      await publish('ITEM_CREATED', {
         itemCreated: {
           id: newItem.id,
           name: newItem.name,
@@ -59,7 +59,7 @@ export const queryMutationResolvers = {
 
       const updatedItem = await Item.findByIdAndUpdate(id, { name, done });
 
-      publish('ITEM_UPDATED', {
+      await publish('ITEM_UPDATED', {
         itemUpdated: {
           id,
           name: name ?? updatedItem.name,
@@ -77,28 +77,15 @@ export const queryMutationResolvers = {
       const Item = mongoose.model('Item');
 
       await Item.findByIdAndDelete(id);
-      publish('ITEM_REMOVED', {
+
+      await publish('ITEM_REMOVED', {
         itemRemoved: id,
       });
+
       return true;
     },
   },
 };
-
-// interface NewSubscribe {
-//   subscribe: GraphQLFieldResolver<unknown,MongooseSubscriptionContext>,
-//   resolve: GraphQLFieldResolver<unknown,MongooseSubscriptionContext>,
-// }
-
-// export const s: NewSubscribe = {
-//   subscribe(_parent: unknown, _args: unknown, { subscribe }) {
-//     return subscribe('ITEM_CREATED');
-//   },
-//   resolve(payload: unknown, _args: unknown) {
-//     console.log({ payload, other, more });
-//     return payload;
-//   },
-// }
 
 export const subscriptionResolvers = {
   Subscription: {
@@ -128,8 +115,3 @@ export const subscriptionResolvers = {
     },
   },
 };
-
-// export const resolvers = {
-//   ...queryMutationResolvers,
-//   ...subscriptionResolvers,
-// };

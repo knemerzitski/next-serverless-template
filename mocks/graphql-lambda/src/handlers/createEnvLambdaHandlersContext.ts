@@ -13,10 +13,14 @@ import { MockApiGatewayManagementApiClient } from '../utils/MockApiGatewayManage
 export function createEnvLambdaHandlers() {
   const sockets: Record<string, WebSocket> = {};
 
+  if (!process.env.MOCK_DYNAMODB_ENDPOINT) {
+    throw new Error('Environment variable "MOCK_DYNAMODB_ENDPOINT" must be defined');
+  }
+
   const dynamoDb: DynamoDbContextConfig = {
     logger: createLogger('mock:dynamodb'),
     clientConfig: {
-      endpoint: process.env.DYNAMODB_ENDPOINT,
+      endpoint: process.env.MOCK_DYNAMODB_ENDPOINT,
       credentials: {
         accessKeyId: 'dummykey123',
         secretAccessKey: 'dummysecretkey123',
@@ -35,6 +39,10 @@ export function createEnvLambdaHandlers() {
     },
   };
 
+  if (!process.env.MOCK_MONGODB_URI) {
+    throw new Error('Environment variable "MOCK_MONGODB_URI" must be defined');
+  }
+
   const httpRequestHandler = createApolloHttpRequestHandler({
     logger: createLogger('mock:apollo-http-request-handler'),
     graphQl: {
@@ -45,7 +53,7 @@ export function createEnvLambdaHandlers() {
     mongoDb: {
       logger: createLogger('mock:mongodb'),
       schema: mongooseSchema,
-      uri: process.env.MONGODB_URI!,
+      uri: process.env.MOCK_MONGODB_URI,
     },
     dynamoDb,
     apiGateway,

@@ -1,4 +1,4 @@
-import { ConditionalCheckFailedException, ReturnValue, Select } from '@aws-sdk/client-dynamodb';
+import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb';
 import {
   DeleteCommand,
   DynamoDBDocumentClient,
@@ -10,6 +10,23 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 
 import { Logger } from '../../utils/logger';
+
+// import { ReturnValue } from @aws-sdk/client-dynamodb is not available in AWS Lambda
+enum ReturnValue {
+  ALL_NEW = 'ALL_NEW',
+  ALL_OLD = 'ALL_OLD',
+  NONE = 'NONE',
+  UPDATED_NEW = 'UPDATED_NEW',
+  UPDATED_OLD = 'UPDATED_OLD',
+}
+
+// import { Select } from @aws-sdk/client-dynamodb is not available in AWS Lambda
+enum Select {
+  ALL_ATTRIBUTES = 'ALL_ATTRIBUTES',
+  ALL_PROJECTED_ATTRIBUTES = 'ALL_PROJECTED_ATTRIBUTES',
+  COUNT = 'COUNT',
+  SPECIFIC_ATTRIBUTES = 'SPECIFIC_ATTRIBUTES',
+}
 
 export interface Table<TKey, TItem> {
   /**

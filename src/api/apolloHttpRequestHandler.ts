@@ -1,8 +1,10 @@
 import { HTTPGraphQLRequest, HeaderMap } from '@apollo/server';
 import { ApolloServer } from '@apollo/server';
 import { ApiGatewayManagementApiClient } from '@aws-sdk/client-apigatewaymanagementapi';
-import { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
+import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts';
+import { APIGatewayProxyHandler } from 'aws-lambda';
 import { APIGatewayProxyEvent } from 'aws-lambda';
+import { ServerApiVersion } from 'mongodb';
 
 import { mongooseSchema } from '../schema/mongoose-schema';
 import { MongooseQueryMutationContext, queryMutationResolvers } from '../schema/resolvers';
@@ -17,14 +19,42 @@ import { createPublisher } from './pubsub/publish';
 
 export interface ApolloHttpRequestHandlerContextConfig {
   graphQl: GraphQlContextConfig<MongooseQueryMutationContext>;
-  mongoDb: MongoDbContextConfig;
+  mongoDb: MongoDbContextConfig | (() => Promise<MongoDbContextConfig>);
   dynamoDb: DynamoDbContextConfig;
   apiGateway: ApiGatewayContextConfig;
   logger: Logger;
 }
 
+async function fetchMongoDbAtlasRoleCredentials() {
+  const stsClient = new STSClient({
+    region: process.env.STS_REGION,
+  });
+
+  const { Credentials } = await stsClient.send(
+    new AssumeRoleCommand({
+      RoleArn: process.env.MONGODB_ATLAS_ROLE_ARN!,
+      RoleSessionName: 'mongodb-atlas',
+    })
+  );
+
+  if (!Credentials?.AccessKeyId || !Credentials.SecretAccessKey) {
+    throw new Error('AssumeRoleCommand did not return access keys');
+  }
+  if (!Credentials?.SessionToken) {
+    throw new Error('AssumeRoleCommand did not return session token');
+  }
+
+  return Credentials;
+}
+
 export function getDefaultConfig(): ApolloHttpRequestHandlerContextConfig {
   const logger = createLogger('apollo-websocket-handler');
+
+  // MongoDB
+  const connectionUri = process.env.MONGODB_ATLAS_URI_SRV!;
+  const databaseName = encodeURIComponent(process.env.MONGODB_ATLAS_DATABASE_NAME!);
+  const mongoDbUri = `${connectionUri}/${databaseName}`;
+
   return {
     logger,
     graphQl: {
@@ -32,10 +62,31 @@ export function getDefaultConfig(): ApolloHttpRequestHandlerContextConfig {
       typeDefs,
       resolvers: queryMutationResolvers,
     },
-    mongoDb: {
-      logger,
-      schema: mongooseSchema,
-      uri: process.env.MONGODB_URI!,
+    mongoDb: async () => {
+      const credentials = await fetchMongoDbAtlasRoleCredentials();
+
+      return {
+        logger,
+        schema: mongooseSchema,
+        uri: mongoDbUri,
+        options: {
+          auth: {
+            username: credentials.AccessKeyId,
+            password: credentials.SecretAccessKey,
+          },
+          authSource: '$external',
+          authMechanism: 'MONGODB-AWS',
+          authMechanismProperties: {
+            AWS_SESSION_TOKEN: credentials.SessionToken,
+          },
+          retryWrites: true,
+          serverApi: {
+            version: ServerApiVersion.v1,
+            strict: true,
+            deprecationErrors: true,
+          },
+        },
+      };
     },
     dynamoDb: {
       logger,
@@ -43,8 +94,8 @@ export function getDefaultConfig(): ApolloHttpRequestHandlerContextConfig {
         region: process.env.DYNAMODB_REGION!,
       },
       tableNames: {
-        connections: process.env.CONNECTIONS_TABLE_NAME!,
-        subscriptions: process.env.SUBSCRIPTIONS_TABLE_NAME!,
+        connections: process.env.DYNAMODB_CONNECTIONS_TABLE_NAME!,
+        subscriptions: process.env.DYNAMODB_SUBSCRIPTIONS_TABLE_NAME!,
       },
     },
     apiGateway: {
@@ -59,11 +110,6 @@ export function getDefaultConfig(): ApolloHttpRequestHandlerContextConfig {
   };
 }
 
-const defaultResponse: APIGatewayProxyResult = {
-  statusCode: 200,
-  body: '',
-};
-
 export function createHandler(
   config: ApolloHttpRequestHandlerContextConfig
 ): APIGatewayProxyHandler {
@@ -76,15 +122,17 @@ export function createHandler(
 
   const apollo = new ApolloServer<MongooseQueryMutationContext>({
     schema: graphQl.schema,
+    introspection: process.env.NODE_ENV !== 'production',
+    nodeEnv: process.env.NODE_ENV,
   });
 
   apollo.startInBackgroundHandlingStartupErrorsByLoggingAndFailingAllRequests();
 
   const publish = createPublisher({ logger, graphQl, apiGateway, dynamoDb });
 
-  return async (event, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
+  logger.info('createHandler');
 
+  return async (event) => {
     try {
       if (!mongoDb) {
         mongoDb = await buildMongoDbContext(config.mongoDb);
@@ -113,8 +161,8 @@ export function createHandler(
         body: res.body.string,
       };
     } catch (err) {
-      logger.error('apolloHttpRequestHandler', err as Error);
-      return defaultResponse;
+      logger.error('apolloHttpRequestHandler', err as Error, { event });
+      throw err;
     }
   };
 }

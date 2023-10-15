@@ -1,25 +1,42 @@
 # Template Next.js App
 
-This is a template serverless TODO App using AWS Lambdas.
+A template todo list app that runs on serverless architecture using AWS and MongoDB for data storage. It uses GraphQL for API and supports subscriptions using AWS Gateway WebSocket API. Events are handled by Lambdas.
 
 Tech stack
 
-- Next.js (only frontend)
+- Next.js (static site generation with export)
 - GraphQL
   - `@apollo/server` - queries and mutations
   - `graphql` - subscriptions
-- DynamoDB (for WebSocket connections and subscriptions)
-- MongoDB, Mongoose (for user data)
+- DynamoDB (only WebSocket connections and subscriptions)
+- MongoDB, Mongoose (for actual data)
 
-## Enviroment variables
+# Getting Started
 
-Variables defined in `.env.local` will be autoloaded.  
-Following environment variables are required (with example values):
+## Prerequesites
 
-```
-MONGODB_URI=mongodb://root:example@localhost:27017/mongo?authSource=admin
-DYNAMODB_ENDPOINT=http://localhost:8000
+- Docker must be installed. It's used to mock DynamoDB, MongoDB and bundle Lambda handers by CDK.
+- NPM package `aws-cdk` is required during deployment with proper session active.
 
-NEXT_PUBLIC_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
-NEXT_PUBLIC_GRAPHQL_WS_URL=ws://localhost:4000/graphql
-```
+## Development
+
+1. Define required environment variables. You can copy `.env.test` to `.env.local`
+2. `npm run mock:db` to start MongoDB and DynamoDB Docker containers detached
+3. `npm run mock:lambda:dev` to run backend GraphQL API (express server that emulates events for lambda handlers)
+4. `npm run dev` to run frontend Next.js
+
+## Testing
+
+`npm run test:prepare` to start DynamoDB and MongoDB containers
+
+- `npm run test:jest` Jest tests
+- `npm run test:component` Cypress component tests
+- `npm run test:e2e` Cypress E2E tests
+
+`npm run:test:cleanup` to stop DynamoDB and MongoDB containers
+
+## Deployment
+
+1. Define required environment variables. Check [.env.production.local.example](.env.production.local.example) for details.
+2. Run `npm run build` to generate static site with Next.js output `export`
+3. Run `npm run deploy` to run AWS CDK and deploy CloudFormation template
