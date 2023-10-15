@@ -98,7 +98,7 @@ export class InfraStack extends Stack {
       environment: {
         NODE_ENV: process.env.NODE_ENV ?? 'production',
         NODE_OPTIONS: '--enable-source-maps',
-        DEBUG: process.env.DEBUG ?? '',
+        DEBUG: process.env.DEBUG ?? '*',
 
         STS_REGION: process.env.STS_REGION ?? '',
         MONGODB_ATLAS_DATABASE_NAME: process.env.MONGODB_ATLAS_DATABASE_NAME!,
@@ -189,7 +189,7 @@ export class InfraStack extends Stack {
       environment: {
         NODE_ENV: process.env.NODE_ENV ?? 'production',
         NODE_OPTIONS: '--enable-source-maps',
-        DEBUG: process.env.DEBUG ?? '',
+        DEBUG: process.env.DEBUG ?? '*',
 
         DYNAMODB_REGION: process.env.DYNAMODB_REGION ?? '',
         DYNAMODB_CONNECTIONS_TABLE_NAME: dynamoDbWebSocketTables.connections.tableName,
