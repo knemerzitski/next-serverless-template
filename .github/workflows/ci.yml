@@ -8,6 +8,8 @@ on:
 
 jobs:
   tests:
+    env:
+      NODE_ENV: test
     strategy:
       matrix:
         node: [18]
