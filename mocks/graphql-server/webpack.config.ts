@@ -22,6 +22,7 @@ const config: Configuration = {
     removeAvailableModules: false,
     removeEmptyChunks: false,
     splitChunks: false,
+    nodeEnv: false,
   },
   stats: 'errors-only',
   module: {
