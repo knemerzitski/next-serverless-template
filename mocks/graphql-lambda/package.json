@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "DEBUG=*,-nodemon*,-express* webpack --color --progress --watch",
     "build": "webpack",
-    "start": "node ./out/main.js"
+    "start": "DEBUG=* node ./out/main.js"
   },
   "devDependencies": {
     "esbuild-loader": "^4.0.2",
