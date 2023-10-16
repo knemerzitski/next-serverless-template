@@ -21,6 +21,7 @@ export function createEnvLambdaHandlers() {
     logger: createLogger('mock:dynamodb'),
     clientConfig: {
       endpoint: process.env.MOCK_DYNAMODB_ENDPOINT,
+      region: 'eu-west-1',
       credentials: {
         accessKeyId: 'dummykey123',
         secretAccessKey: 'dummysecretkey123',
