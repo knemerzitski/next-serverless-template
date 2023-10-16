@@ -8,6 +8,10 @@ describe('Todo List', () => {
     cy.dropCollection(collectionName, { failSilently: true });
   });
 
+  it('visits home page', () => {
+    cy.visit('/');
+  });
+
   it('should add item', () => {
     const itemName = faker.string.sample();
 

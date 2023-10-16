@@ -4,14 +4,5 @@
     "dev": "DEBUG=*,-nodemon*,-express* webpack --color --progress --watch",
     "build": "webpack",
     "start": "DEBUG=*,-express* node ./out/main.js"
-  },
-  "devDependencies": {
-    "esbuild-loader": "^4.0.2",
-    "fork-ts-checker-webpack-plugin": "^9.0.0",
-    "graphql-subscriptions": "^2.0.0",
-    "nodemon-webpack-plugin": "^4.8.1",
-    "raw-loader": "^4.0.2",
-    "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4"
   }
 }

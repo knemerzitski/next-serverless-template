@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 const relEnvPath = `./${process.env.NODE_ENV === 'test' ? '.env.test' : '.env.local'}`;
 const envPath = path.join(__dirname, relEnvPath);
 
-const e2eEnv = dotenv.parse(readFileSync(envPath));
+const envVars = dotenv.parse(readFileSync(envPath));
 
 export default defineConfig({
   env: {
@@ -18,13 +18,12 @@ export default defineConfig({
       database: 'mongo',
       collecton: 'items',
     },
+    ...envVars,
   },
   e2e: {
     baseUrl: 'http://127.0.0.1:3000',
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
-    env: e2eEnv,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on) {
       configurePlugin(on);
     },
   },
