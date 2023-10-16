@@ -23,7 +23,7 @@
     "test:prepare": "(cd ./mocks/dynamodb && docker compose up -d --wait) && (cd ./mocks/mongodb && docker compose up -d --wait)",
     "test:jest": "jest",
     "test:component": "cypress run --component",
-    "test:e2e": "start-test start http://localhost:3000 \"cypress run --e2e\"",
+    "test:e2e": "start-test start http://127.0.0.1:3000 \"cypress run --e2e\"",
     "test:cleanup": "(cd ./mocks/dynamodb && docker compose down) && (cd ./mocks/mongodb && docker compose down)",
     "test:jest:watch": "jest --watch",
     "cypress": "cypress open",

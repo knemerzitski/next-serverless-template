@@ -50,7 +50,7 @@ describe('newTable', () => {
 
     const client = new DynamoDBClient({
       region: 'eu-west-1',
-      endpoint: 'http://localhost:8000',
+      endpoint: 'http://127.0.0.1:8000',
       credentials: {
         accessKeyId: 'dummykey123',
         secretAccessKey: 'dummysecretkey123',
