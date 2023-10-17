@@ -20,7 +20,7 @@ export function webSocketSubscriptionHandler({
   sockets: Record<string, WebSocket>;
   logger: Logger;
 }) {
-  return (ws: WebSocket) => {
+  return async (ws: WebSocket) => {
     const id = randomUUID();
     sockets[id] = ws;
 
@@ -28,34 +28,40 @@ export function webSocketSubscriptionHandler({
       id,
     });
 
-    handler(createApiGatewayProxyWebSocketEventV2(id, 'CONNECT'), createLambdaContext(), () => {});
-
-    ws.on('message', (data) => {
+    ws.on('message', async (data) => {
       // try {
       //   logger.info('ws:message', { data: JSON.parse(data.toString()) });
       // } catch (err) {
       //   logger.error('ws:message:parseError', err as Error);
       // }
-      handler(
-        createApiGatewayProxyWebSocketEventV2(id, 'MESSAGE', data.toString()),
-        createLambdaContext(),
-        () => {}
-      );
+      try {
+        await handler(
+          createApiGatewayProxyWebSocketEventV2(id, 'MESSAGE', data.toString()),
+          createLambdaContext(),
+          () => {}
+        );
+      } catch (err) {
+        logger.error('handler:MESSAGE', err as Error);
+      }
     });
 
     ws.on('error', (err) => {
       logger.error('ws:error', err, { id });
     });
 
-    ws.on('close', () => {
+    ws.on('close', async () => {
       logger.info('ws:close', {
         id,
       });
-      handler(
-        createApiGatewayProxyWebSocketEventV2(id, 'DISCONNECT'),
-        createLambdaContext(),
-        () => {}
-      );
+      try {
+        await handler(
+          createApiGatewayProxyWebSocketEventV2(id, 'DISCONNECT'),
+          createLambdaContext(),
+          () => {}
+        );
+      } catch (err) {
+        logger.error('handler:DISCONNECT', err as Error);
+      }
 
       delete sockets[id];
     });
@@ -79,6 +85,17 @@ export function webSocketSubscriptionHandler({
     ws.on('close', (ws) => {
       logger.info('ws:close', { id, ws });
     });
+
+    try {
+      await handler(
+        createApiGatewayProxyWebSocketEventV2(id, 'CONNECT'),
+        createLambdaContext(),
+        () => {}
+      );
+    } catch (err) {
+      logger.error('handler:CONNECT', err as Error);
+      delete sockets[id];
+    }
   };
 }
 

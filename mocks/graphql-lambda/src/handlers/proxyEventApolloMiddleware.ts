@@ -21,7 +21,7 @@ export function proxyEventApolloMiddleware({
 
       apiGatewayProxyApolloResultToExpressResponse(res, result);
     } catch (err) {
-      logger.error('proxyEventApolloMiddleware', err as Error);
+      logger.error('handler:HTTP', err as Error);
       res.status(500).json(err);
     }
   };
