@@ -12,7 +12,7 @@ describe('Todo List', () => {
     cy.visit('/');
   });
 
-  it('should add item', () => {
+  it('adds item', () => {
     const itemName = faker.string.sample();
 
     cy.visit('/');
@@ -28,7 +28,7 @@ describe('Todo List', () => {
     cy.get('ul').children().should('have.length', 1);
   });
 
-  it('should set item done', () => {
+  it('sets item done', () => {
     cy.insertOne(
       {
         _id: new UUID(faker.string.uuid()),
@@ -51,7 +51,7 @@ describe('Todo List', () => {
     cy.get('span').should('have.css', 'text-decoration-line', 'line-through');
   });
 
-  it('should remove item', () => {
+  it('removes item', () => {
     cy.insertOne(
       {
         _id: new UUID(faker.string.uuid()),
