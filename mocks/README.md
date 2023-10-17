@@ -9,8 +9,8 @@ Ports must match on both URLs. Environment variables can be loaded from [.env.lo
 For example:
 
 ```
-NEXT_PUBLIC_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
-NEXT_PUBLIC_GRAPHQL_WS_URL=ws://localhost:4000/graphql
+NEXT_PUBLIC_GRAPHQL_HTTP_URL=http://127.0.0.1:4000/graphql
+NEXT_PUBLIC_GRAPHQL_WS_URL=ws://127.0.0.1:4000/graphql
 ```
 
 ## [graphql-server](./graphql-lambda/)
@@ -28,32 +28,32 @@ Ports must match on both URLs. Environment variables can be loaded from [.env.lo
 For example:
 
 ```
-NEXT_PUBLIC_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
-NEXT_PUBLIC_GRAPHQL_WS_URL=ws://localhost:4000/graphql
+NEXT_PUBLIC_GRAPHQL_HTTP_URL=http://127.0.0.1:4000/graphql
+NEXT_PUBLIC_GRAPHQL_WS_URL=ws://127.0.0.1:4000/graphql
 ```
 
 ## [dynamodb](./dynamodb/)
 
 Docker image `amazon/dynamodb-local` is used to mock DynamoDB.  
-Endpoint: `http://localhost:8000`.
+Endpoint: `http://127.0.0.1:8000`.
 
 ## [mongodb](./mongodb/)
 
 Docker image `mongo` is used to mock MongoDB.  
-URI: `mongodb://root:example@localhost:27017/mongo?authSource=admin`
+URI: `mongodb://root:example@127.0.0.1:27017/mongo?authSource=admin`
 
 # Accessing GraphQL on terminal
 
 ### HTTP request
 
 ```bash
-$ curl -X POST http://localhost:4000/graphql -H 'Content-Type: application/json' -d '{"query":"{items{id name done}}"}'
+$ curl -X POST http://127.0.0.1:4000/graphql -H 'Content-Type: application/json' -d '{"query":"{items{id name done}}"}'
 ```
 
 ### WebSocket
 
 ```bash
-$ wscat -s graphql-transport-ws -c ws://localhost:4000/graphql
+$ wscat -s graphql-transport-ws -c ws://127.0.0.1:4000/graphql
 > {"type":"connection_init"}
 > {"id":"randomid","type":"subscribe","payload":{"operationName":"OnItemAdded", "query":"subscription OnItemAdded {itemCreated {id name done}}"}}
 ```

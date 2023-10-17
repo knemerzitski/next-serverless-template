@@ -8,9 +8,13 @@ import { createEnvLambdaHandlers } from './handlers/createEnvLambdaHandlersConte
 
 const logger = createLogger('mock:lambda-graphql-server');
 
-const envPath = path.join(__dirname, './../../../.env.local');
+logger.info('index:NODE_ENV', { NODE_ENV: process.env.NODE_ENV });
+
+const relEnvPath = `./../../../${process.env.NODE_ENV === 'test' ? '.env.test' : '.env.local'}`;
+const envPath = path.join(__dirname, relEnvPath);
 dotenv.config({ path: envPath });
-logger.info('env:load', { envPath: envPath.toString() });
+
+logger.info('index:env-load', { path: envPath.toString() });
 
 (async () => {
   try {

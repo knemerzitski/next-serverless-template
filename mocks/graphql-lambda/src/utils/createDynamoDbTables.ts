@@ -16,6 +16,7 @@ export async function createDynamoDbTables({
   logger: Logger;
 }) {
   const client = new DynamoDBClient({
+    region: 'eu-west-1',
     endpoint,
     credentials: {
       accessKeyId: 'dummykey123',

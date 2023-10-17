@@ -8,6 +8,8 @@ on:
 
 jobs:
   tests:
+    env:
+      NODE_ENV: test
     strategy:
       matrix:
         node: [18]
@@ -27,11 +29,11 @@ jobs:
       - name: Clean install dependencies
         run: npm ci
 
-      - name: Build app static files with Next.js export
-        run: npm run build
+      - name: Start DynamoDB container on port 8000
+        run: npm run dynamodb:start
 
-      - name: Start DynamoDB and MongoDB containers
-        run: npm run test:prepare
+      - name: Start MongoDB container on port 27107
+        run: npm run mongodb:start
 
       - name: Run Jest tests
         run: npm run test:jest
@@ -39,8 +41,11 @@ jobs:
       - name: Run Cypress component tests
         run: npm run test:component
 
-      - name: Run Cypress E2E tests
-        run: npm run test:e2e
+      - name: Build app Next.js export
+        run: npm run app:build
 
-      - name: Stop DynamoDB and MongoDB containers
-        run: npm run test:cleanup
+      - name: Build api GraphQL lambdas mocked by express
+        run: npm run api:build
+
+      - name: Start app, api, wait for APP port and run Cypress E2E tests
+        run: npm run test:e2e:start-test

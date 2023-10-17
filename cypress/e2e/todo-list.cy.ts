@@ -1,11 +1,15 @@
 import { faker } from '@faker-js/faker';
-import MUUID from 'uuid-mongodb';
+import { UUID } from 'bson';
 
 const collectionName = 'items';
 
 describe('Todo List', () => {
   beforeEach(() => {
     cy.dropCollection(collectionName, { failSilently: true });
+  });
+
+  it('visits home page', () => {
+    cy.visit('/');
   });
 
   it('should add item', () => {
@@ -27,7 +31,7 @@ describe('Todo List', () => {
   it('should set item done', () => {
     cy.insertOne(
       {
-        _id: MUUID.from(faker.string.uuid()),
+        _id: new UUID(faker.string.uuid()),
         name: faker.string.sample(),
         done: false,
       },
@@ -50,7 +54,7 @@ describe('Todo List', () => {
   it('should remove item', () => {
     cy.insertOne(
       {
-        _id: MUUID.from(faker.string.uuid()),
+        _id: new UUID(faker.string.uuid()),
         name: faker.string.sample(),
         done: false,
       },
