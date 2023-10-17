@@ -41,11 +41,11 @@ jobs:
       - name: Run Cypress component tests
         run: npm run test:component
 
-      - name: Build APP Next.js export
+      - name: Build app Next.js export
         run: npm run app:build
 
-      - name: Build API mock GraphQL lambdas
+      - name: Build api GraphQL lambdas mocked by express
         run: npm run api:build
 
-      - name: Start APP, API, wait for APP port and run Cypress E2E tests
+      - name: Start app, api, wait for APP port and run Cypress E2E tests
         run: npm run test:e2e:start-test
