@@ -115,6 +115,6 @@
     "webpack-cli": "^5.1.4"
   },
   "validate-branch-name": {
-    "pattern": "^(dev|test|main|release)$|^(feat|fix|hotfix|wip|merge)/.+$"
+    "pattern": "^(dev|test|main|release)$|^(feat|fix|hotfix|wip|merge/test)/.+$"
   }
 }
