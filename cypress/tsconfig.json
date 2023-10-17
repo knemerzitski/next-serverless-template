@@ -1,10 +1,23 @@
 {
-  "extends": "../tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "baseUrl": "../node_modules",
+    "target": "ES5",
+    "lib": ["ES5", "DOM"],
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node10",
+
+    "alwaysStrict": true,
+    "jsx": "preserve",
+
+    "types": ["cypress", "node"],
+    "typeRoots": ["./../node_modules/@types"],
     "paths": {
       "@/*": ["../src/*"]
     }
   },
-  "exclude": ["../node_modules"]
+  "include": ["./../**/*.ts", "./../**/*.tsx"]
 }
