@@ -1,4 +1,4 @@
-import debug from 'debug';
+import debug, { Debugger } from 'debug';
 
 type LogLevel = 'info' | 'warning' | 'error';
 
@@ -23,34 +23,42 @@ export interface Logger {
  */
 const logDataFormatter = process.env.NODE_ENV === 'production' ? '%j' : '%O';
 
-export function createLogger(namespace: string): Logger {
-  const logFunc = debug(namespace);
+function createNamespaceLog(namespace: string) {
+  const debugFunc = debug(namespace);
+  return (entry: LogEntry) => formatLog(debugFunc, entry);
+}
 
-  function log(entry: LogEntry) {
-    logFunc(
-      `${entry.level.toUpperCase()}\t${entry.message}${entry.data ? ` ${logDataFormatter}` : '%s'}`,
-      entry.data ?? ''
-    );
-  }
+function formatLog(func: Debugger, entry: LogEntry) {
+  func(
+    `${entry.level.toUpperCase()}\t${entry.message}${entry.data ? ` ${logDataFormatter}` : '%s'}`,
+    entry.data ?? ''
+  );
+}
+
+export function createLogger(namespace: string): Logger {
+  const log = createNamespaceLog(namespace);
+  const logInfo = createNamespaceLog(`${namespace}:info`);
+  const logWarning = createNamespaceLog(`${namespace}:warning`);
+  const logError = createNamespaceLog(`${namespace}:error`);
 
   return {
     log,
     info(message, data) {
-      log({
+      logInfo({
         level: 'info',
         message,
         data,
       });
     },
     warning(message, data) {
-      log({
+      logWarning({
         level: 'warning',
         message,
         data,
       });
     },
     error(message, error, extraData) {
-      log({
+      logError({
         level: 'error',
         message,
         data: {

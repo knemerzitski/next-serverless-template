@@ -1,8 +1,8 @@
 {
   "main": "./src/index.ts",
   "scripts": {
-    "dev": "DEBUG=*,-nodemon*,-express* webpack --color --progress --watch",
+    "dev": "DEBUG=*:error webpack --color --progress --watch",
     "build": "webpack",
-    "start": "DEBUG=*,-express* node ./out/main.js"
+    "start": "DEBUG=*:error node ./out/main.js"
   }
 }
