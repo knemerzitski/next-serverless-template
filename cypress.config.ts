@@ -14,14 +14,14 @@ const envVars = dotenv.parse(readFileSync(envPath));
 export default defineConfig({
   env: {
     mongodb: {
-      uri: 'mongodb://root:example@127.0.0.1:27017?authSource=admin',
+      uri: 'mongodb://root:example@localhost:27017?authSource=admin',
       database: 'mongo',
       collecton: 'items',
     },
     ...envVars,
   },
   e2e: {
-    baseUrl: 'http://127.0.0.1:3000',
+    baseUrl: 'http://localhost:3000',
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on) {
       configurePlugin(on);

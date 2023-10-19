@@ -23,7 +23,7 @@
     "lint": "eslint . --cache",
     "test:jest": "jest",
     "test:component": "cypress run --component",
-    "test:e2e:start-test": "start-test start http://127.0.0.1:3000 \"npm run test:e2e\"",
+    "test:e2e:start-test": "start-test start http://localhost:3000 \"npm run test:e2e\"",
     "test:e2e": "cypress run --e2e",
     "deploy": "cdk deploy",
     "semantic-release": "SKIP_BY_SEMANTIC_RELEASE=true semantic-release"
