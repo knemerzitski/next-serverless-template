@@ -29,7 +29,7 @@
     "semantic-release": "SKIP_BY_SEMANTIC_RELEASE=true semantic-release"
   },
   "devDependencies": {
-    "@apollo/client": "^3.8.5",
+    "@apollo/client": "^3.8.6",
     "@apollo/server": "^4.9.4",
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.97.0-alpha.0",
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.97.0-alpha.0",
